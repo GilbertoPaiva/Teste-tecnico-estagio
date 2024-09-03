@@ -14,35 +14,35 @@ public class Faturamento {
         try {
             // Ler o arquivo JSON
             ObjectMapper mapper = new ObjectMapper();
-            List<FaturamentoDia> faturamentoDiario = mapper.readValue(new File("src/main/java/br/com/gpaiva/faturamentoMensal/faturamento.json"), new TypeReference<List<FaturamentoDia>>() {});
+            List<FaturamentoDia> faturamentoDiario = mapper.readValue(new File("src/main/java/br/com/gpaiva/faturamentoMensal/dados.json"), new TypeReference<List<FaturamentoDia>>() {});
 
             // Filtrar os dias sem faturamento
             List<FaturamentoDia> diasComFaturamento = faturamentoDiario.stream()
-                    .filter(f -> f.getFaturamento() > 0)
+                    .filter(f -> f.getValor() > 0)
                     .toList();
 
             // Calcular o menor e o maior valor de faturamento e os dias correspondentes
-            double menorFaturamento = diasComFaturamento.stream().mapToDouble(FaturamentoDia::getFaturamento).min().orElse(0.0);
-            double maiorFaturamento = diasComFaturamento.stream().mapToDouble(FaturamentoDia::getFaturamento).max().orElse(0.0);
+            double menorFaturamento = diasComFaturamento.stream().mapToDouble(FaturamentoDia::getValor).min().orElse(0.0);
+            double maiorFaturamento = diasComFaturamento.stream().mapToDouble(FaturamentoDia::getValor).max().orElse(0.0);
             int diaMenorFaturamento = faturamentoDiario.stream()
-                    .filter(f -> f.getFaturamento() == menorFaturamento)
+                    .filter(f -> f.getValor() == menorFaturamento)
                     .findFirst()
                     .map(FaturamentoDia::getDia)
                     .orElse(-1);
             int diaMaiorFaturamento = faturamentoDiario.stream()
-                    .filter(f -> f.getFaturamento() == maiorFaturamento)
+                    .filter(f -> f.getValor() == maiorFaturamento)
                     .findFirst()
                     .map(FaturamentoDia::getDia)
                     .orElse(-1);
 
             // Calcular a média de faturamento
-            OptionalDouble mediaOptional = diasComFaturamento.stream().mapToDouble(FaturamentoDia::getFaturamento).average();
+            OptionalDouble mediaOptional = diasComFaturamento.stream().mapToDouble(FaturamentoDia::getValor).average();
             double mediaFaturamento = mediaOptional.orElse(0.0);
 
             // Contar o número de dias com faturamento superior à média e listar esses dias
-            long diasAcimaDaMedia = diasComFaturamento.stream().filter(f -> f.getFaturamento() > mediaFaturamento).count();
+            long diasAcimaDaMedia = diasComFaturamento.stream().filter(f -> f.getValor() > mediaFaturamento).count();
             List<Integer> diasAcimaDaMediaList = faturamentoDiario.stream()
-                    .filter(f -> f.getFaturamento() > mediaFaturamento)
+                    .filter(f -> f.getValor() > mediaFaturamento)
                     .map(FaturamentoDia::getDia)
                     .toList();
 
